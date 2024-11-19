@@ -1,31 +1,24 @@
+import FinanceDataReader as fdr
+import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 import json
 import os
+from datetime import date,timedelta
 from supabase import create_client, Client
 from dotenv import load_dotenv
 
-dollar_index=0
-won_dollar_rate=0
-won_yen_rate=0
-won_yuan_rate=0
-dollar_gold_rate=0
-dollar_silver_rate=0
-dollar_bit_rate=0
-p2p_ratio: 1.07
+today = str(date.today()) #한국장마감시간에 돌거 
+yesterday = str(date.today() - timedelta(days=1))
 
-
-url = 'https://finance.naver.com/marketindex/'
-
-response = requests.get(url)
-
-if response.status_code == 200:  # 정상 응답 반환 시 아래 코드블록 실행
-    soup = BeautifulSoup(response.text, 'html.parser')  # 응답 받은 HTML 파싱
-    exchange_list = soup.find('div',id='sInput')  # 파싱한 데이터에서 div 태그 내 news_list 클래스 내 데이터 저장
-    usd = exchange_list.find('option',class_='selectbox-default')
-    won_dollar_rate = usd['value']
-else:
-    print('error')  # 오류 시 메시지 출력
+won_dollar_rate = round(fdr.DataReader('USD/KRW',today).loc[today, 'Adj Close'],2)
+won_yen_rate = round(fdr.DataReader('JPY/KRW',today).loc[today, 'Adj Close'],2)
+won_yuan_rate = round(fdr.DataReader('CNY/KRW',today).loc[today, 'Adj Close'],2)
+won_euro_rate = round(fdr.DataReader('EUR/KRW',today).loc[today, 'Adj Close'],2)
+dollar_bit_rate = round(fdr.DataReader('BTC/USD',today).loc[today, 'Adj Close'],2)
+#dollar_gold_rate = round(fdr.DataReader('AU/USD',today).loc[today, 'Adj Close'],2)
+#dollar_silver_rate = round(fdr.DataReader('AU/USD',today).loc[today, 'Adj Close'],2)
+dollar_index = round(fdr.DataReader('^NYICDX',today).loc[today, 'Adj Close'],2)
 
 url2 = 'https://www.kitco.com/charts/gold'
 response = requests.get(url2)
@@ -51,6 +44,21 @@ if response.status_code == 200:  # 정상 응답 반환 시 아래 코드블록 
 else:
     print('error')  # 오류 시 메시지 출력
 
+kr_kospi = round(fdr.DataReader('KS11',today).loc[today, 'Close'],2)
+kr_kosdaq = round(fdr.DataReader('KQ11',today).loc[today, 'Close'],2)
+
+#미국
+us_dow = round(fdr.DataReader('DJI',yesterday).loc[yesterday, 'Close'],2)
+us_nasdaq = round(fdr.DataReader('IXIC',yesterday).loc[yesterday, 'Close'],2)
+us_snp500 = round(fdr.DataReader('S&P500',yesterday).loc[yesterday, 'Close'],2)
+
+us5yt = round(fdr.DataReader('US5YT',today).loc[today, 'Adj Close'],2) # 5년 만기 미국국채 수익률
+us10yt = round(fdr.DataReader('US10YT',today).loc[today, 'Adj Close'],2) # 1년 만기 미국국채 수익률
+us30yt = round(fdr.DataReader('US30YT',today).loc[today, 'Adj Close'],2) # 30년 만기 미국국채 수익률
+
+
+
+# 데이터 등록 부분
 load_dotenv()
 
 # Supabase URL과 API Key 가져오기

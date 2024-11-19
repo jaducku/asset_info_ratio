@@ -2,3 +2,5 @@ requests
 bs4
 supabase
 python-dotenv
+finance-datareader
+plotly
