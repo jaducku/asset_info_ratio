@@ -4,3 +4,4 @@ supabase
 python-dotenv
 finance-datareader
 plotly
+pandas

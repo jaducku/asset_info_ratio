@@ -8,7 +8,7 @@ from datetime import date,timedelta
 from supabase import create_client, Client
 from dotenv import load_dotenv
 
-today = str(date.today()) #한국장마감시간에 돌거 
+today = str(date.today())
 yesterday = str(date.today() - timedelta(days=1))
 
 won_dollar_rate = round(fdr.DataReader('USD/KRW',today).loc[today, 'Adj Close'],2)
@@ -43,20 +43,6 @@ if response.status_code == 200:  # 정상 응답 반환 시 아래 코드블록 
     dollar_silver_rate = internal_silver_price_ozt
 else:
     print('error')  # 오류 시 메시지 출력
-
-kr_kospi = round(fdr.DataReader('KS11',today).loc[today, 'Close'],2)
-kr_kosdaq = round(fdr.DataReader('KQ11',today).loc[today, 'Close'],2)
-
-#미국
-us_dow = round(fdr.DataReader('DJI',yesterday).loc[yesterday, 'Close'],2)
-us_nasdaq = round(fdr.DataReader('IXIC',yesterday).loc[yesterday, 'Close'],2)
-us_snp500 = round(fdr.DataReader('S&P500',yesterday).loc[yesterday, 'Close'],2)
-
-us5yt = round(fdr.DataReader('US5YT',today).loc[today, 'Adj Close'],2) # 5년 만기 미국국채 수익률
-us10yt = round(fdr.DataReader('US10YT',today).loc[today, 'Adj Close'],2) # 1년 만기 미국국채 수익률
-us30yt = round(fdr.DataReader('US30YT',today).loc[today, 'Adj Close'],2) # 30년 만기 미국국채 수익률
-
-
 
 # 데이터 등록 부분
 load_dotenv()
